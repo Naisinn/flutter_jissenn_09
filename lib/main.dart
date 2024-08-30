@@ -1,74 +1,65 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(
-    const MaterialApp(
-      home: HomeScreen(),
-    ),
-  );
+  runApp(const MaterialApp(
+    home: HomeScreen(),
+  ));
 }
 
-// HomeScreenはStatefulWidget
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key}) : super();
+  const HomeScreen({super.key});
 
   @override
   State createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _counter = 0;
+  final list = List.generate(5, (index) => index);
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('HomeScreen build');
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Screen'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // ボタンをタップするとカウントアップする
-            ElevatedButton(
-              child: Text('Home Screen Count: ($_counter)'),
-              onPressed: () {
-                setState(() {
-                  _counter++;
-                });
-              },
-            ),
-            const CounterButton(),
-          ],
-        ),
+      body: Column(
+        children: list.map((element) {
+          return ListItem(widgetIndex: element);
+        }).toList(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            debugPrint('Swap first and last element');
+            final value = list.removeAt(0);
+            list.add(value);
+          });
+        },
+        child: const Icon(Icons.swap_vert),
       ),
     );
   }
 }
 
-// CounterButtonはStatefulWidget
-class CounterButton extends StatefulWidget {
-  const CounterButton({super.key}) : super();
+class ListItem extends StatefulWidget {
+  const ListItem({super.key, required this.widgetIndex});
+
+  final int widgetIndex;
 
   @override
-  State createState() => _CounterButtonState();
+  State createState() => _ListItemState();
 }
 
-class _CounterButtonState extends State<CounterButton> {
-  int _counter = 0;
+class _ListItemState extends State<ListItem> {
+  static int counter = 0;
+  final int _stateIndex = counter++;
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('CounterButton build');
-    // ボタンをタップするとカウントアップする
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          _counter++;
-        });
-      },
-      child: Text('Counter Button Count: ($_counter)'),
+    return ListTile(
+      title: Text(
+        'Widget index ${widget.widgetIndex}, State index $_stateIndex',
+      ),
     );
   }
 }
